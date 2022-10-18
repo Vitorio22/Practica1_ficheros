@@ -1,12 +1,15 @@
 package org.ies.federica.service;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheetConditionalFormatting;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.ies.federica.dao.FileDAO;
 import org.ies.federica.dao.FileDAOImpl;
 import org.ies.federica.entity.InfoShopEntity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,8 @@ public class ExcelService {
 
     FileDAO fileDAO = new FileDAOImpl();
 
-    public void createExcelFile(String path, String pathExerciseTwo) {
+    public void createExcelFile(String path, String pathExerciseTwo) throws IOException {
+
 
         List<InfoShopEntity> infoShopEntityList = loadInfo();
 
@@ -35,16 +39,23 @@ public class ExcelService {
         }
     }
 
-    private List<InfoShopEntity> loadInfo() {
+    private List<InfoShopEntity> loadInfo() throws IOException {
+        File fileInvoice = new File("src/main/resources/invoice_202009.csv");
+        List<String> lines = fileDAO.getLinesInFiles(fileInvoice);
         List<InfoShopEntity> infoShopEntityList = new ArrayList<>();
-        infoShopEntityList.add(new InfoShopEntity("Fiesta Glam", "Vestido", "29/08/2020",
-                70, 2.1, 14.7, 31.3, 21.9));
-        infoShopEntityList.add(new InfoShopEntity("Fiesta Glam", "Vestido", "30/08/2020",
-                70, 2.1, 14.7, 31.3, 21.9));
-        infoShopEntityList.add(new InfoShopEntity("Snoopy", "Camiseta", "29/08/2020",
-                8, 1.9, 1.68, 2.32, 2.09));
-        infoShopEntityList.add(new InfoShopEntity("Friends", "Camiseta", "30/08/2020",
-                8, 1.9, 1.68, 2.32, 2.09));
+        double totalCost;
+        double benefit;
+        for (int i = 1; i < lines.size(); i++) {
+            String[] splitLine = lines.get(i).split(";");
+            fileDAO.replaceCaracters(splitLine);
+            totalCost = Double.parseDouble(splitLine[4]) + Double.parseDouble(splitLine[5]) +
+                    Double.parseDouble(splitLine[6]);
+            benefit = Double.parseDouble(splitLine[3]) - totalCost;
+
+            infoShopEntityList.add(new InfoShopEntity(splitLine[0], splitLine[1], splitLine[2],
+                    Double.parseDouble(splitLine[3]), Double.parseDouble(splitLine[4]),
+                    Double.parseDouble(splitLine[5]), Double.parseDouble(splitLine[6]), benefit));
+        }
         return infoShopEntityList;
     }
 
@@ -98,8 +109,7 @@ public class ExcelService {
 
     private void createRows(List<InfoShopEntity> infoShopEntityList, Sheet sheet, CellStyle backgroundStyle, CellStyle fontStyle, Font font) {
 
-        backgroundStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-        backgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
         font.setFontName("Arial");
         font.setColor(IndexedColors.BLACK.getIndex());
         fontStyle.setFont(font);
@@ -156,6 +166,18 @@ public class ExcelService {
             cell.setCellValue(text);
             cell.setCellStyle(fontStyle);
             cell.setCellStyle(backgroundStyle);
+
+            ConditionalFormattingRule rule1 = sheet.getSheetConditionalFormatting().createConditionalFormattingRule("MOD(ROW() - 1, 2) = 1");
+            PatternFormatting patternFmt = rule1.createPatternFormatting();
+
+            patternFmt.setFillBackgroundColor(IndexedColors.GREEN.getIndex());
+            patternFmt.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+
+            CellRangeAddress[] regions = {
+                    CellRangeAddress.valueOf("A1:H" + infoShopEntityList.size())
+            };
+
+            sheet.getSheetConditionalFormatting().addConditionalFormatting(regions, rule1);
         }
     }
 }

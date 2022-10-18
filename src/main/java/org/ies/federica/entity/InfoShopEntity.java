@@ -8,17 +8,17 @@ public class InfoShopEntity {
 
     private String saleDate;
 
-    private double salePrice;
+    private Double salePrice;
 
-    private double derivedCosts;
+    private Double derivedCosts;
 
-    private double productionCosts;
+    private Double productionCosts;
 
-    private double taxes;
+    private Double taxes;
 
-    private double benefit;
+    private Double benefit;
 
-    public InfoShopEntity(String article, String type, String saleDate, double salePrice, double derivedCosts, double productionCosts, double taxes, double benefit) {
+    public InfoShopEntity(String article, String type, String saleDate, Double salePrice, Double derivedCosts, Double productionCosts, Double taxes, Double benefit) {
         this.article = article;
         this.type = type;
         this.saleDate = saleDate;
@@ -53,43 +53,43 @@ public class InfoShopEntity {
         this.saleDate = saleDate;
     }
 
-    public double getSalePrice() {
+    public Double getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(double salePrice) {
+    public void setSalePrice(Double salePrice) {
         this.salePrice = salePrice;
     }
 
-    public double getDerivedCosts() {
+    public Double getDerivedCosts() {
         return derivedCosts;
     }
 
-    public void setDerivedCosts(double derivedCosts) {
+    public void setDerivedCosts(Double derivedCosts) {
         this.derivedCosts = derivedCosts;
     }
 
-    public double getProductionCosts() {
+    public Double getProductionCosts() {
         return productionCosts;
     }
 
-    public void setProductionCosts(double productionCosts) {
+    public void setProductionCosts(Double productionCosts) {
         this.productionCosts = productionCosts;
     }
 
-    public double getTaxes() {
+    public Double getTaxes() {
         return taxes;
     }
 
-    public void setTaxes(double taxes) {
+    public void setTaxes(Double taxes) {
         this.taxes = taxes;
     }
 
-    public double getBenefit() {
+    public Double getBenefit() {
         return benefit;
     }
 
-    public void setBenefit(double benefit) {
+    public void setBenefit(Double benefit) {
         this.benefit = benefit;
     }
 }

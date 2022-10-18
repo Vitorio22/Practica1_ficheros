@@ -36,7 +36,8 @@ public class FileDAOImpl implements FileDAO {
         System.out.println("Tipo: " + splitLine[1]);
         System.out.println("Precio de venta: " + splitLine[3]);
         System.out.println("Coste: " + totalCost);
-        System.out.println("Beneficio: " + benefit + '\n');
+        System.out.println("Beneficio: " + benefit);
+        System.out.println("--------------------------------------------------" + '\n');
     }
 
     @Override
@@ -50,7 +51,8 @@ public class FileDAOImpl implements FileDAO {
                             "Tipo: " + splitLine[1] + '\n' +
                             "Precio de venta: " + splitLine[3] + '\n' +
                             "Coste: " + totalCost + '\n' +
-                            "Beneficio: " + benefit + '\n');
+                            "Beneficio: " + benefit + '\n' +
+                            "--------------------------------------------------" + '\n');
             bufferedWriter.newLine();
         } catch (IOException e) {
             throw new RuntimeException(e);

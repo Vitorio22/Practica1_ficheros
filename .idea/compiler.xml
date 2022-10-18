@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="PracticaUT2Ficheros" />
+        <module name="Practica1_ficheros" />
       </profile>
     </annotationProcessing>
   </component>
