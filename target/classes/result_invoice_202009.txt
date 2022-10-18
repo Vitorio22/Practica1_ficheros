@@ -1,0 +1,6 @@
+Factura: invoice_202009.txt
+Numero de articulos: 4
+Beneficio total: 48.0
+Ruta del fichero: src\main\resources\invoice_202009.txt
+Nombre del fichero: invoice_202009.txt
+Tamaño del fichero: 373.0bytes
