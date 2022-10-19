@@ -5,14 +5,15 @@ import org.ies.federica.dao.FileDAOImpl;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class FileService {
-
     FileDAO fileDAO = new FileDAOImpl();
-
     public void fileSplit(String path) throws IOException {
 
+        String pathResource = "src/main/resources/";
         File file = new File(path);
         String invoiceName = file.getName().replace(".csv", ".txt");
 
@@ -25,13 +26,16 @@ public class FileService {
                     Double.parseDouble(splitLine[5]) +
                     Double.parseDouble(splitLine[6]);
             double benefit = Double.parseDouble(splitLine[3]) - totalCost;
-            fileDAO.showInfoFile(splitLine, totalCost, benefit);
-            fileDAO.writeInFile(invoiceName, splitLine, totalCost, benefit);
+            BigDecimal formatNumber = new BigDecimal(benefit);
+            formatNumber = formatNumber.setScale(2, RoundingMode.DOWN);
+            fileDAO.showInfoFile(splitLine, totalCost, formatNumber.doubleValue(), invoiceName);
+            fileDAO.writeInFile(invoiceName, splitLine, totalCost, formatNumber.doubleValue());
         }
+        System.out.println("Fichero " + invoiceName + " generado correctamente en " + pathResource);
     }
-
     public void modifyFile(String path) throws IOException {
 
+        String pathResource = "src/main/resources/";
         File fileResult = new File(path);
         String invoiceName = fileResult.getName();
 
@@ -48,10 +52,13 @@ public class FileService {
             if (splitLine[0].equals("Beneficio")) {
                 totalBenefit += Double.parseDouble(splitLine[1]);
 
-            }
-            fileDAO.writeInResultFile(invoiceName, articleAmount, totalBenefit, splitLine);
-        }
 
+            }
+            BigDecimal formatNumber = new BigDecimal(totalBenefit);
+            formatNumber = formatNumber.setScale(2, RoundingMode.DOWN);
+            fileDAO.writeInResultFile(invoiceName, articleAmount, formatNumber.doubleValue(), splitLine);
+        }
+        System.out.println("Fichero " + "result_" + invoiceName + " generado correctamente en " + pathResource);
     }
 }
 

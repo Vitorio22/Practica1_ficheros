@@ -13,7 +13,7 @@ public interface FileDAO {
 
     void replaceCaracters(String[] splitLine);
 
-    void showInfoFile(String[] splitLine, double costeTotal, double beneficio);
+    void showInfoFile(String[] splitLine, double costeTotal, double beneficio, String invoiceName);
 
     void writeInFile(String nombreFactura, String[] splitLine, double totalCost, double benefit);
 
