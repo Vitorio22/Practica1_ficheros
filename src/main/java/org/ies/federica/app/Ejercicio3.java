@@ -5,11 +5,11 @@ import org.ies.federica.service.ExcelService;
 import java.io.IOException;
 
 public class Ejercicio3 {
-    private static final String PATH = "src/main/resources/ShopInfo.xlsx";
-    private static final String PATH_EXERCISE_TWO = "src/main/resources/result_invoice_202009.txt";
-    public static void main(String[] args) throws IOException {
-        ExcelService excelService = new ExcelService();
-        excelService.createExcelFile(PATH, PATH_EXERCISE_TWO);
+    private static final String PATH = "src/main/resources/";
 
+    public static void main(String[] args) throws IOException {
+
+        ExcelService excelService = new ExcelService();
+        excelService.createExcelFile(PATH);
     }
 }

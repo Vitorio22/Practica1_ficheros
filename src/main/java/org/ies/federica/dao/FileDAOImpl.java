@@ -20,6 +20,7 @@ public class FileDAOImpl implements FileDAO {
         }
         return lines;
     }
+
     @Override
     public void replaceCaracters(String[] splitLine) {
         splitLine[3] = splitLine[3].replace(",", ".");
@@ -27,8 +28,9 @@ public class FileDAOImpl implements FileDAO {
         splitLine[5] = splitLine[5].replace(",", ".");
         splitLine[6] = splitLine[6].replace(",", ".");
     }
+
     @Override
-    public void showInfoFile(String[] splitLine, double totalCost, double benefit, String invoiceName) {
+    public void showInfoFile(String[] splitLine, double totalCost, double benefit) {
 
         System.out.println("Articulo: " + splitLine[0]);
         System.out.println("Tipo: " + splitLine[1]);
@@ -37,10 +39,11 @@ public class FileDAOImpl implements FileDAO {
         System.out.println("Beneficio: " + benefit);
         System.out.println("--------------------------------------------------" + '\n');
     }
-    @Override
-    public void writeInFile(String nombreFactura, String[] splitLine, double totalCost, double benefit) {
 
-        File saveFile = new File("src/main/resources/" + nombreFactura);
+    @Override
+    public void writeInFile(String replaceExtension, File fileResult, String[] splitLine, double totalCost, double benefit) {
+
+        File saveFile = new File("src/main/resources/" + replaceExtension);
         try (Writer writer = new FileWriter(saveFile, true);
              BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             bufferedWriter.write(
@@ -54,39 +57,40 @@ public class FileDAOImpl implements FileDAO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-    @Override
-    public void writeInResultFile(String invoiceName, int articleAmount, double totalBenefit, String[] splitLine) {
 
-        File finalFile = new File("src/main/resources/result_" + invoiceName);
-        File csvFile = new File("src/main/resources/invoice_202009.txt");
-        String path = csvFile.getPath();
-        String csvName = csvFile.getName();
-        double csvSize = csvFile.length();
+    }
+
+    @Override
+    public void writeInResultFile(String onvoiceName, String pathSecondFile, String nameSecondFile, double sizeSecondFile,
+                                  int articleAmount, double totalBenefit) {
+
+        File finalFile = new File("src/main/resources/result_" + nameSecondFile);
+
         try (Writer writer = new FileWriter(finalFile);
              BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             bufferedWriter.write(
-                    "Factura: " + invoiceName + '\n' +
+                    "Factura: " + onvoiceName + '\n' +
                             "Numero de articulos: " + articleAmount + '\n' +
                             "Beneficio total: " + totalBenefit + '\n' +
-                            "Ruta del fichero: " + path + '\n' +
-                            "Nombre del fichero: " + csvName + '\n' +
-                            "Tamaño del fichero: " + csvSize + " bytes" + '\n');
+                            "Ruta del fichero: " + pathSecondFile + '\n' +
+                            "Nombre del fichero: " + nameSecondFile + '\n' +
+                            "Tamaño del fichero: " + sizeSecondFile + " bytes" + '\n');
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    @Override
-    public void createExcelInDisk(Workbook workbook, String path, String pathExerciseTwo) throws IOException {
 
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
+    @Override
+    public void createExcelInDisk(Workbook workbook, String nameExcelFile, String pathSecondFile) throws IOException {
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             workbook.write(byteArrayOutputStream);
-            workbook.write(new FileOutputStream(path));
-            System.out.println("Excel creado en: " + path);
+            workbook.write(new FileOutputStream("src/main/resources/" + nameExcelFile));
+            System.out.println("Excel " + nameExcelFile + " creado correctamente");
 
             double excelSize = byteArrayOutputStream.size();
 
-            File file = new File(pathExerciseTwo);
+            File file = new File(pathSecondFile);
             List<String> lines = new ArrayList<>();
             try (Reader reader = new FileReader(file);
                  BufferedReader bufferedReader = new BufferedReader(reader)) {
@@ -95,8 +99,9 @@ public class FileDAOImpl implements FileDAO {
                     lines.add(row);
                 }
             }
-            lines.add("Ruta del fichero: " + path);
-            lines.add("Tamaño del fichero: " + excelSize + " bytes");
+            String excelPath = "src/main/resources/" + nameExcelFile;
+            lines.add("Ruta del fichero excel: " + excelPath);
+            lines.add("Tamaño del fichero excel: " + excelSize + " bytes");
             try (Writer writer = new FileWriter(file);
                  BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
                 for (String line : lines) {
@@ -106,7 +111,7 @@ public class FileDAOImpl implements FileDAO {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("Fichero " + pathExerciseTwo + " modificado correctamente");
+            System.out.println("Fichero " + pathSecondFile + " modificado correctamente");
         }
     }
 }

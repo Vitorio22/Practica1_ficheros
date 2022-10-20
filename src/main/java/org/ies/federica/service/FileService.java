@@ -11,13 +11,18 @@ import java.util.List;
 
 public class FileService {
     FileDAO fileDAO = new FileDAOImpl();
+
     public void fileSplit(String path) throws IOException {
 
-        String pathResource = "src/main/resources/";
-        File file = new File(path);
-        String invoiceName = file.getName().replace(".csv", ".txt");
-
-        List<String> lines = fileDAO.getLinesInFiles(file);
+        File fileResult = null;
+        File[] files = new File(path).listFiles();
+        for (File file : files) {
+            if (file.isFile() && file.getName().contains(".csv")) {
+                fileResult = new File(file.getPath());
+            }
+        }
+        String replaceExtension = fileResult.getName().replace(".csv", ".txt");
+        List<String> lines = fileDAO.getLinesInFiles(fileResult);
 
         for (int i = 1; i < lines.size(); i++) {
             String[] splitLine = lines.get(i).split(";");
@@ -28,18 +33,32 @@ public class FileService {
             double benefit = Double.parseDouble(splitLine[3]) - totalCost;
             BigDecimal formatNumber = new BigDecimal(benefit);
             formatNumber = formatNumber.setScale(2, RoundingMode.DOWN);
-            fileDAO.showInfoFile(splitLine, totalCost, formatNumber.doubleValue(), invoiceName);
-            fileDAO.writeInFile(invoiceName, splitLine, totalCost, formatNumber.doubleValue());
+            fileDAO.showInfoFile(splitLine, totalCost, formatNumber.doubleValue());
+            fileDAO.writeInFile(replaceExtension, fileResult, splitLine, totalCost, formatNumber.doubleValue());
         }
-        System.out.println("Fichero " + invoiceName + " generado correctamente en " + pathResource);
+        System.out.println("Fichero " + replaceExtension + " generado correctamente");
     }
+
     public void modifyFile(String path) throws IOException {
 
-        String pathResource = "src/main/resources/";
-        File fileResult = new File(path);
-        String invoiceName = fileResult.getName();
+        File firstFile = null;
+        File secondFile = null;
+        File[] files = new File(path).listFiles();
 
-        List<String> lines = fileDAO.getLinesInFiles(fileResult);
+        for (File file : files) {
+            if (file.isFile() && file.getName().contains(".txt")) {
+                secondFile = new File(path + file.getName());
+            }
+            if (file.isFile() && file.getName().contains(".csv")) {
+                firstFile = new File(file.getName());
+            }
+        }
+        String onvoiceName = firstFile.getName();
+        String nameSecondFile = secondFile.getName();
+        String pathSecondFile = secondFile.getPath();
+        double sizeSecondFile = secondFile.length();
+
+        List<String> lines = fileDAO.getLinesInFiles(secondFile);
 
         int articleAmount = 0;
         double totalBenefit = 0;
@@ -56,9 +75,9 @@ public class FileService {
             }
             BigDecimal formatNumber = new BigDecimal(totalBenefit);
             formatNumber = formatNumber.setScale(2, RoundingMode.DOWN);
-            fileDAO.writeInResultFile(invoiceName, articleAmount, formatNumber.doubleValue(), splitLine);
+            fileDAO.writeInResultFile(onvoiceName, pathSecondFile, nameSecondFile, sizeSecondFile, articleAmount, formatNumber.doubleValue());
         }
-        System.out.println("Fichero " + "result_" + invoiceName + " generado correctamente en " + pathResource);
+        System.out.println("Fichero " + "result_" + nameSecondFile + " generado correctamente");
     }
 }
 

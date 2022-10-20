@@ -3,7 +3,6 @@ package org.ies.federica.dao;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -13,13 +12,15 @@ public interface FileDAO {
 
     void replaceCaracters(String[] splitLine);
 
-    void showInfoFile(String[] splitLine, double costeTotal, double beneficio, String invoiceName);
+    void showInfoFile(String[] splitLine, double costeTotal, double beneficio);
 
-    void writeInFile(String nombreFactura, String[] splitLine, double totalCost, double benefit);
+    void writeInFile(String replaceExtension, File nombreFactura, String[] splitLine,
+                     double totalCost, double benefit);
 
-    void writeInResultFile(String nombreFactura, int cantidadArticulos, double totalBeneficio, String[] splitLine);
+    void writeInResultFile(String onvoiceName, String pathSecondFile, String nameSecondFile,
+                           double sizeSecondFile, int articleAmount, double totalBenefit);
 
-    void createExcelInDisk(Workbook workbook, String path, String pathExerciseTwo) throws FileNotFoundException, IOException;
+    void createExcelInDisk(Workbook workbook, String nameExcelFile, String secondFilePath) throws IOException;
 }
 
 

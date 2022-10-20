@@ -17,7 +17,22 @@ import java.util.List;
 
 public class ExcelService {
     FileDAO fileDAO = new FileDAOImpl();
-    public void createExcelFile(String path, String pathExerciseTwo) throws IOException {
+    public void createExcelFile(String path) throws IOException {
+
+        File excelFile = null;
+        File secondFile = null;
+        File[] files = new File(path).listFiles();
+        for (File file : files) {
+            if (file.isFile() && file.getName().contains(".csv")) {
+                excelFile = new File(file.getPath());
+            }
+            if (file.isFile() && file.getName().contains(".txt")) {
+                secondFile = new File(file.getPath());
+            }
+        }
+
+        String nameExcelFile = excelFile.getName().replace(".csv", ".xlsx");
+        String pathSecondFile = secondFile.getPath();
 
         List<InfoShopEntity> infoShopEntityList = loadInfo();
 
@@ -37,7 +52,7 @@ public class ExcelService {
             createHeader(sheet, workbook.createCellStyle(), workbook.createFont());
             createRows(infoShopEntityList, sheet, workbook.createCellStyle(), workbook.createFont());
 
-            fileDAO.createExcelInDisk(workbook, path, pathExerciseTwo);
+            fileDAO.createExcelInDisk(workbook, nameExcelFile, pathSecondFile);
 
         } catch (IOException e) {
             System.err.println("Error en la creacion del workbook: " + e.getMessage());
@@ -45,8 +60,14 @@ public class ExcelService {
     }
     private List<InfoShopEntity> loadInfo() throws IOException {
 
-        File fileInvoice = new File("src/main/resources/invoice_202009.csv");
-        List<String> lines = fileDAO.getLinesInFiles(fileInvoice);
+        File invoiceFile = null;
+        File[] files = new File("src/main/resources/").listFiles();
+        for (File file : files) {
+            if (file.isFile() && file.getName().contains(".csv")) {
+                invoiceFile = new File(file.getPath());
+            }
+        }
+        List<String> lines = fileDAO.getLinesInFiles(invoiceFile);
         List<InfoShopEntity> infoShopEntityList = new ArrayList<>();
 
         for (int i = 1; i < lines.size(); i++) {
